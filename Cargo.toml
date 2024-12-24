@@ -1,0 +1,3 @@
+[workspace]
+members = ["crates/reif", "crates/reif_core", "crates/reif_macro"]
+resolver = "2"
