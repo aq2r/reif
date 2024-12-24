@@ -45,7 +45,9 @@ fn rfmatch_parse(input: ParseStream) -> Result<TokenStream> {
                 .map_err(|err| Error::new(lit_str.span(), err))?]
         }
         HirKind::Class(class) => vec![tokens::class_tokens(class, ElseAction::Return)],
-        HirKind::Look(_look) => return Err(Error::new(lit_str.span(), "Look is unsupported")),
+        HirKind::Look(_look) => {
+            return Err(Error::new(lit_str.span(), "'Look' alone cannot be used."))
+        }
         HirKind::Repetition(repetition) => {
             vec![tokens::repetition_tokens(repetition)
                 .map_err(|err| Error::new(lit_str.span(), err))?]
@@ -81,13 +83,14 @@ fn rfmatch_parse(input: ParseStream) -> Result<TokenStream> {
 #[cfg(test)]
 mod tests {
     use quote::quote;
+    use regex_syntax::Parser;
 
     use super::_create_process;
 
     #[test]
     fn debug() {
         let tokens =
-            _create_process(quote! {r"https?://discord\.com/channels/([0-9]+)/([0-9]+)/([0-9]+)"});
+            _create_process(quote! {r"$abc^"});
         dbg!(tokens);
     }
 }
