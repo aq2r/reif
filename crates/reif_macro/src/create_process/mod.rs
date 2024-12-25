@@ -106,13 +106,17 @@ fn rfmatch_parse(input: ParseStream) -> Result<TokenStream> {
             .map_err(|err| Error::new(lit_str.span(), err))?],
     };
 
-    let mut for_max_tokens = match is_start_only {
+    let for_max_tokens = match is_start_only {
         true => quote! {
         (0..1) },
         false => quote! {
             {
                 let char_boundaries: Vec<usize> = input.char_indices().map(|(i, _)| i).collect();
-                dbg!(char_boundaries)
+                if char_boundaries.is_empty() {
+                    vec![0]
+                } else {
+                    char_boundaries
+                }
             }
         },
     };
@@ -141,7 +145,6 @@ fn rfmatch_parse(input: ParseStream) -> Result<TokenStream> {
             for i in #for_max_tokens {
                 let mut rest = &input[i..];
 
-                dbg!(i);
                 let result = (|| -> bool {
                     #(#tokens)*
 

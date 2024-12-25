@@ -57,11 +57,6 @@ pub fn class_tokens(class: &Class, else_action: ElseAction) -> TokenStream {
         })
         .collect();
 
-    let else_token_true = match else_action {
-        ElseAction::Return => quote! { return true; },
-        ElseAction::Break => quote! { break; },
-    };
-
     let else_token_false = match else_action {
         ElseAction::Return => quote! { return false; },
         ElseAction::Break => quote! { break; },
@@ -70,7 +65,7 @@ pub fn class_tokens(class: &Class, else_action: ElseAction) -> TokenStream {
     quote! {
         {
             let Some(c) = rest.chars().next() else {
-                #else_token_true
+                #else_token_false
             };
 
             let result = match c {
