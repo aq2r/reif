@@ -20,9 +20,8 @@ where
 #[macro_export]
 macro_rules! new {
     ($lit:literal) => {{
-        use $crate::create_process;
         $crate::Reif {
-            process: create_process!($lit),
+            process: $crate::create_process!($lit),
         }
     }};
 
