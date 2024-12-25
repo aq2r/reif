@@ -90,7 +90,7 @@ pub fn repetition_tokens(repetition: &Repetition) -> anyhow::Result<TokenStream>
     };
 
     let inner_tokens = match repetition.sub.kind() {
-        regex_syntax::hir::HirKind::Empty => todo!(),
+        regex_syntax::hir::HirKind::Empty => vec![quote! {}],
         regex_syntax::hir::HirKind::Literal(literal) => {
             vec![literal_tokens(literal, ElseAction::Break)?]
         }
@@ -140,7 +140,7 @@ pub fn concat_tokens(vec: &Vec<Hir>, else_action: ElseAction) -> anyhow::Result<
 
     for i in vec {
         match i.kind() {
-            HirKind::Empty => todo!(),
+            HirKind::Empty => tokens_vec.push(quote! {}),
             HirKind::Literal(literal) => tokens_vec.push(literal_tokens(literal, else_action)?),
             HirKind::Class(class) => tokens_vec.push(class_tokens(class, else_action)),
             HirKind::Look(_look) => {
@@ -164,7 +164,7 @@ pub fn alternation_tokens(vec: &Vec<Hir>, else_action: ElseAction) -> anyhow::Re
 
     for i in vec {
         match i.kind() {
-            HirKind::Empty => todo!(),
+            HirKind::Empty => tokens_vec_vec.push(vec![quote! {}]),
             HirKind::Literal(literal) => {
                 tokens_vec_vec.push(vec![literal_tokens(literal, else_action)?])
             }
@@ -214,7 +214,7 @@ pub fn alternation_tokens(vec: &Vec<Hir>, else_action: ElseAction) -> anyhow::Re
 
 pub fn capture_tokens(capture: &Capture, else_action: ElseAction) -> anyhow::Result<TokenStream> {
     let tokens_vec = match capture.sub.kind() {
-        HirKind::Empty => todo!(),
+        HirKind::Empty => vec![quote! {}],
         HirKind::Literal(literal) => {
             vec![literal_tokens(literal, ElseAction::Return)?]
         }
