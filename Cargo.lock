@@ -94,6 +94,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "reif_example"
+version = "0.1.0"
+dependencies = [
+ "regex",
+ "reif",
+]
+
+[[package]]
 name = "reif_macro"
 version = "0.1.0"
 dependencies = [
