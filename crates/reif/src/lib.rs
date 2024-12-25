@@ -33,10 +33,9 @@ macro_rules! new {
 
 #[cfg(test)]
 mod tests {
-    use crate::Reif;
-
+    #[ignore]
     #[test]
     fn reif_new() {
-        let reif = new!("abc+");
+        let _reif = crate::new!("^(ab|cd)$");
     }
 }

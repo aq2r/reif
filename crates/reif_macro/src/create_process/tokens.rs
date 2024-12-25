@@ -97,7 +97,9 @@ pub fn repetition_tokens(repetition: &Repetition) -> anyhow::Result<TokenStream>
         regex_syntax::hir::HirKind::Class(class) => {
             vec![class_tokens(class, ElseAction::Break)]
         }
-        regex_syntax::hir::HirKind::Look(_look) => return Err(anyhow!("Look is unsupported")),
+        regex_syntax::hir::HirKind::Look(_look) => {
+            return Err(anyhow!("Reif does not support 'Look' at this position."))
+        }
         regex_syntax::hir::HirKind::Repetition(repetition) => {
             vec![repetition_tokens(repetition)?]
         }
@@ -141,7 +143,12 @@ pub fn concat_tokens(vec: &Vec<Hir>, else_action: ElseAction) -> anyhow::Result<
             HirKind::Empty => todo!(),
             HirKind::Literal(literal) => tokens_vec.push(literal_tokens(literal, else_action)?),
             HirKind::Class(class) => tokens_vec.push(class_tokens(class, else_action)),
-            HirKind::Look(_look) => return Err(anyhow!("Look is unsupported")),
+            HirKind::Look(_look) => {
+                return Err(anyhow!(
+                    "Reif does not support 'Look' at this position.\n\
+                     Did you mean `^(ab|cd)$`?"
+                ))
+            }
             HirKind::Repetition(repetition) => tokens_vec.push(repetition_tokens(repetition)?),
             HirKind::Capture(capture) => tokens_vec.push(capture_tokens(capture, else_action)?),
             HirKind::Concat(vec) => tokens_vec.append(&mut concat_tokens(vec, else_action)?),
@@ -162,7 +169,9 @@ pub fn alternation_tokens(vec: &Vec<Hir>, else_action: ElseAction) -> anyhow::Re
                 tokens_vec_vec.push(vec![literal_tokens(literal, else_action)?])
             }
             HirKind::Class(class) => tokens_vec_vec.push(vec![class_tokens(class, else_action)]),
-            HirKind::Look(_look) => return Err(anyhow!("Look is unsupported")),
+            HirKind::Look(_look) => {
+                return Err(anyhow!("Reif does not support 'Look' at this position."))
+            }
             HirKind::Repetition(repetition) => {
                 tokens_vec_vec.push(vec![repetition_tokens(repetition)?])
             }
@@ -210,7 +219,9 @@ pub fn capture_tokens(capture: &Capture, else_action: ElseAction) -> anyhow::Res
             vec![literal_tokens(literal, ElseAction::Return)?]
         }
         HirKind::Class(class) => vec![class_tokens(class, ElseAction::Return)],
-        HirKind::Look(_look) => return Err(anyhow!("Look is unsupported")),
+        HirKind::Look(_look) => {
+            return Err(anyhow!("Reif does not support 'Look' at this position."))
+        }
         HirKind::Repetition(repetition) => vec![repetition_tokens(repetition)?],
         HirKind::Capture(capture) => vec![capture_tokens(capture, ElseAction::Return)?],
         HirKind::Concat(vec) => concat_tokens(vec, ElseAction::Return)?,
