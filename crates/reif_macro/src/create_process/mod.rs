@@ -107,19 +107,27 @@ fn rfmatch_parse(input: ParseStream) -> Result<TokenStream> {
     };
 
     let mut for_max_tokens = match is_start_only {
-        true => quote! { (0..1 ) },
-        false => quote! { (0..input.len() - 1) },
+        true => quote! {
+        (0..1) },
+        false => quote! {
+            {
+                let char_boundaries: Vec<usize> = input.char_indices().map(|(i, _)| i).collect();
+                dbg!(char_boundaries)
+            }
+        },
     };
 
-    if !is_start_only && is_end_only {
-        for_max_tokens = quote! { #for_max_tokens.rev() }
-    }
+    let add_len_tokens = match is_start_only {
+        true => quote! { || !(input.len() == matched_part.len()) },
+        false => quote! {},
+    };
 
     let end_only_tokens = match is_end_only {
         true => {
             quote! {
                 let matched_part = &input[0..(input.len() - rest.len())];
-                if !input.ends_with(matched_part) {
+
+                if !input.ends_with(matched_part) #add_len_tokens {
                     return false;
                 }
             }
@@ -133,6 +141,7 @@ fn rfmatch_parse(input: ParseStream) -> Result<TokenStream> {
             for i in #for_max_tokens {
                 let mut rest = &input[i..];
 
+                dbg!(i);
                 let result = (|| -> bool {
                     #(#tokens)*
 
@@ -164,7 +173,7 @@ mod tests {
         let hir = Parser::new().parse(r"^abc");
         dbg!(&hir);
 
-        let tokens = _create_process(quote! {r"^abc"});
+        let tokens = _create_process(quote! {r"b{3, 5}$"});
         dbg!(tokens);
     }
 }
